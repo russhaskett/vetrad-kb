@@ -266,17 +266,33 @@
       return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
     }
     function field(label, value) {
-      if (!value || !String(value).trim()) return "";
-      return "<div class='op-section'><div class='op-label'>" + label + "</div><div class='op-value'>" + esc(String(value)) + "</div></div>";
+      if (!value) return "";
+      var display;
+      if (Array.isArray(value)) {
+        if (!value.length) return "";
+        display = value.length > 1
+          ? "<ul style='padding-left:18px;margin:0'>" + value.map(function(v){ return "<li>" + esc(String(v)) + "</li>"; }).join("") + "</ul>"
+          : esc(String(value[0]));
+      } else {
+        if (!String(value).trim()) return "";
+        display = esc(String(value));
+      }
+      return "<div class='op-section'><div class='op-label'>" + label + "</div><div class='op-value'>" + display + "</div></div>";
     }
     function stepsField(label, value) {
-      if (!value || !String(value).trim()) return "";
-      var lines = String(value).split("\n").map(function(l){ return l.trim(); }).filter(Boolean);
+      if (!value) return "";
+      var lines;
+      if (Array.isArray(value)) {
+        lines = value.map(function(l){ return String(l).trim(); }).filter(Boolean);
+      } else {
+        lines = String(value).split("\n").map(function(l){ return l.trim(); }).filter(Boolean);
+      }
+      if (!lines.length) return "";
       var html;
       if (lines.length > 1) {
         html = "<ol>" + lines.map(function(l){ return "<li>" + esc(l.replace(/^\d+[.)\s]+/, "")) + "</li>"; }).join("") + "</ol>";
       } else {
-        html = esc(value);
+        html = esc(lines[0]);
       }
       return "<div class='op-section'><div class='op-label'>" + label + "</div><div class='op-value'>" + html + "</div></div>";
     }
