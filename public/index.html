@@ -286,17 +286,15 @@
     }
     function field(label, value) {
       if (!value) return "";
-      var display;
+      var str;
       if (Array.isArray(value)) {
         if (!value.length) return "";
-        display = value.length > 1
-          ? "<ul style='padding-left:18px;margin:0'>" + value.map(function(v){ return "<li>" + esc(String(v)) + "</li>"; }).join("") + "</ul>"
-          : esc(String(value[0]));
+        str = value.map(function(v){ return String(v); }).join(", ");
       } else {
-        if (!String(value).trim()) return "";
-        display = esc(String(value));
+        str = String(value);
       }
-      return "<div class='op-section'><div class='op-label'>" + label + "</div><div class='op-value'>" + display + "</div></div>";
+      if (!str.trim()) return "";
+      return "<div class='op-section'><div class='op-label'>" + label + "</div><div class='op-value'>" + esc(str) + "</div></div>";
     }
     function stepsField(label, value) {
       if (!value) return "";
@@ -307,13 +305,8 @@
         lines = String(value).split("\n").map(function(l){ return l.trim(); }).filter(Boolean);
       }
       if (!lines.length) return "";
-      var html;
-      if (lines.length > 1) {
-        html = "<ol>" + lines.map(function(l){ return "<li>" + esc(l.replace(/^\d+[.)\s]+/, "")) + "</li>"; }).join("") + "</ol>";
-      } else {
-        html = esc(lines[0]);
-      }
-      return "<div class='op-section'><div class='op-label'>" + label + "</div><div class='op-value'>" + html + "</div></div>";
+      var numbered = lines.map(function(l, i){ return (i+1) + ". " + l.replace(/^\d+[.)\s]+/, ""); }).join("\n");
+      return "<div class='op-section'><div class='op-label'>" + label + "</div><div class='op-value' style='white-space:pre-line'>" + esc(numbered) + "</div></div>";
     }
     function escalationField(contact) {
       if (!contact || !String(contact).trim()) return "";
