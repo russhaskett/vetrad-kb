@@ -41,6 +41,19 @@ app.post('/auth', (req, res) => {
   }
 });
 
+app.get('/one-pagers-list', async (req, res) => {
+  const { pin } = req.query;
+  if (pin !== APP_PIN) return res.status(401).json({ error: 'Unauthorized' });
+  try {
+    const sql = neon(getNeonConnectionString());
+    const rows = await sql`SELECT ticket_type, intake_channel, volume_per_day, file_path FROM one_pagers ORDER BY ticket_type`;
+    res.json({ one_pagers: rows });
+  } catch (err) {
+    console.error('One-pagers list error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.get('/knowledge', async (req, res) => {
   const { pin } = req.query;
   if (pin !== APP_PIN) return res.status(401).json({ error: 'Unauthorized' });

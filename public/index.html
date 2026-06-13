@@ -235,12 +235,19 @@
       document.getElementById("op-back-btn").onclick = showListView;
     }
 
+    var opListError = null;
     async function loadOpList() {
+      opListError = null;
       try {
         var res = await fetch("/one-pagers-list?pin=" + encodeURIComponent(sessionPin));
         var data = await res.json();
-        opList = data.one_pagers || [];
-      } catch(e) { opList = []; }
+        if (!res.ok || data.error) {
+          opListError = data.error || ("HTTP " + res.status);
+          opList = [];
+        } else {
+          opList = data.one_pagers || [];
+        }
+      } catch(e) { opListError = e.message; opList = []; }
     }
 
     function renderOpList() {
@@ -250,7 +257,10 @@
       // Clear existing items
       container.querySelectorAll(".op-list-item").forEach(function(el) { el.remove(); });
       if (!opList || !opList.length) {
-        container.innerHTML = "<div style=\"text-align:center;color:#999;padding:40px;font-size:14px;\">No one-pagers found.</div>";
+        var msg = opListError
+          ? "Error loading one-pagers: " + opListError
+          : "No one-pagers found.";
+        container.innerHTML = "<div style=\"text-align:center;color:#c00;padding:40px;font-size:14px;\">" + escText(msg) + "</div>";
         return;
       }
       opList.forEach(function(item) {
