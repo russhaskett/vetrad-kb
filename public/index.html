@@ -8,7 +8,6 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f5f5f5; height: 100vh; display: flex; flex-direction: column; }
 
-    /* screens */
     .screen { display: none; flex-direction: column; flex: 1; overflow: hidden; }
     .screen.active { display: flex; }
 
@@ -41,28 +40,37 @@
     .home-card h2 { font-size: 18px; color: #1a3a5c; margin-bottom: 8px; }
     .home-card p { font-size: 13px; color: #888; line-height: 1.5; }
 
-    /* ONE-PAGERS */
-    .op-list { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 8px; }
-    .op-item { background: white; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); overflow: hidden; }
-    .op-header { padding: 16px 20px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; user-select: none; }
-    .op-header:hover { background: #f9f9f9; }
-    .op-header-left h3 { font-size: 15px; color: #1a3a5c; font-weight: 600; }
-    .op-meta { font-size: 12px; color: #999; margin-top: 2px; }
-    .op-chevron { color: #aaa; font-size: 14px; transition: transform 0.2s; flex-shrink: 0; }
-    .op-item.open .op-chevron { transform: rotate(180deg); }
-    .op-body { display: none; padding: 0 20px 20px; border-top: 1px solid #f0f0f0; }
-    .op-item.open .op-body { display: block; }
-    .op-section { margin-top: 14px; }
-    .op-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #999; margin-bottom: 4px; }
-    .op-value { font-size: 14px; color: #222; line-height: 1.6; }
-    .op-value ol { padding-left: 20px; }
-    .op-value li { margin-bottom: 3px; }
-    .copy-row { display: flex; align-items: center; gap: 8px; }
-    .copy-btn { background: none; border: 1px solid #ddd; border-radius: 4px; padding: 2px 8px; font-size: 11px; color: #666; cursor: pointer; flex-shrink: 0; }
-    .copy-btn:hover { border-color: #1a3a5c; color: #1a3a5c; }
-    .copy-btn.copied { background: #e8f5e9; border-color: #4caf50; color: #2e7d32; }
-    .op-ask-btn { margin-top: 18px; width: 100%; background: #1a3a5c; color: white; border: none; border-radius: 8px; padding: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
-    .op-ask-btn:hover { background: #254e7a; }
+    /* ONE-PAGER LIST */
+    #op-list-view { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 6px; }
+    .op-list-item { background: white; border-radius: 10px; padding: 16px 20px; cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,0.07); display: flex; align-items: center; justify-content: space-between; border: 1px solid transparent; }
+    .op-list-item:hover { border-color: #1a3a5c; }
+    .op-list-item h3 { font-size: 15px; color: #1a3a5c; font-weight: 600; }
+    .op-list-item .op-meta { font-size: 12px; color: #999; margin-top: 2px; }
+    .op-list-arrow { color: #aaa; font-size: 16px; flex-shrink: 0; margin-left: 12px; }
+
+    /* ONE-PAGER DETAIL */
+    #op-detail-view { flex: 1; overflow-y: auto; padding: 32px; display: none; }
+    #op-detail-view.active { display: block; }
+    #op-list-view.hidden { display: none; }
+    .op-detail-content { max-width: 800px; margin: 0 auto; background: white; border-radius: 12px; padding: 32px 40px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+    /* Markdown styles */
+    .op-detail-content h1 { font-size: 22px; color: #1a3a5c; margin-bottom: 8px; }
+    .op-detail-content h2 { font-size: 16px; color: #1a3a5c; margin-top: 24px; margin-bottom: 8px; padding-bottom: 4px; border-bottom: 1px solid #e8eef4; }
+    .op-detail-content h3 { font-size: 14px; color: #333; margin-top: 16px; margin-bottom: 6px; font-weight: 600; }
+    .op-detail-content p { font-size: 14px; color: #333; line-height: 1.7; margin-bottom: 10px; }
+    .op-detail-content ol, .op-detail-content ul { padding-left: 22px; margin-bottom: 10px; }
+    .op-detail-content li { font-size: 14px; color: #333; line-height: 1.7; margin-bottom: 4px; }
+    .op-detail-content strong { font-weight: 600; color: #111; }
+    .op-detail-content em { font-style: italic; }
+    .op-detail-content hr { border: none; border-top: 1px solid #e8eef4; margin: 20px 0; }
+    .op-detail-content blockquote { border-left: 3px solid #1a3a5c; padding-left: 12px; margin: 12px 0; color: #555; font-size: 13px; }
+    .op-detail-content code { background: #f4f4f4; padding: 2px 6px; border-radius: 3px; font-size: 12px; font-family: monospace; }
+    .op-detail-content table { border-collapse: collapse; width: 100%; margin-bottom: 12px; font-size: 13px; }
+    .op-detail-content th { background: #f0f4f8; padding: 8px 12px; text-align: left; font-weight: 600; border: 1px solid #dde; }
+    .op-detail-content td { padding: 8px 12px; border: 1px solid #dde; }
+    .op-detail-content tr:nth-child(even) td { background: #fafafa; }
+    .op-ask-ai-btn { display: block; margin: 24px 0 0; width: 100%; background: #1a3a5c; color: white; border: none; border-radius: 8px; padding: 12px; font-size: 14px; font-weight: 600; cursor: pointer; text-align: center; }
+    .op-ask-ai-btn:hover { background: #254e7a; }
 
     /* CHAT */
     #chat { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
@@ -126,12 +134,15 @@
 
   <!-- ONE-PAGERS -->
   <div id="onepager-screen" class="screen">
-    <header>
-      <button class="back-btn" onclick="showHome()">&#8592; Home</button>
-      <h1>One-Pagers</h1>
+    <header id="op-header">
+      <button class="back-btn" id="op-back-btn">&#8592; Home</button>
+      <h1 id="op-header-title">One-Pagers</h1>
     </header>
-    <div class="op-list" id="op-list">
-      <div style="text-align:center;color:#999;padding:40px;font-size:14px;">Loading...</div>
+    <div id="op-list-view">
+      <div style="text-align:center;color:#999;padding:40px;font-size:14px;" id="op-loading">Loading...</div>
+    </div>
+    <div id="op-detail-view">
+      <div class="op-detail-content" id="op-detail-content"></div>
     </div>
   </div>
 
@@ -164,23 +175,19 @@
   <script>
     var sessionPin = null;
     var chatHistory = [];
-    var kbData = null;
+    var opList = null;
+    var currentTicketType = null;
 
-    // --- PIN ---
+    // PIN
     document.getElementById("pin-input").addEventListener("keydown", function(e) {
       if (e.key === "Enter") submitPin();
     });
-
     async function submitPin() {
       var pin = document.getElementById("pin-input").value.trim();
       var errEl = document.getElementById("pin-error");
       errEl.textContent = "";
       if (!pin) return;
-      var res = await fetch("/auth", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ pin: pin })
-      });
+      var res = await fetch("/auth", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ pin: pin }) });
       var data = await res.json();
       if (data.ok) {
         sessionPin = pin;
@@ -192,7 +199,7 @@
       }
     }
 
-    // --- SCREENS ---
+    // SCREENS
     function showScreen(id) {
       document.querySelectorAll(".screen").forEach(function(s) { s.classList.remove("active"); });
       document.getElementById(id).classList.add("active");
@@ -200,142 +207,100 @@
     function showHome() { showScreen("home-screen"); }
     function showChat(prefill) {
       showScreen("chat-screen");
-      if (prefill) {
-        document.getElementById("chat-input").value = prefill;
-        sendMessage();
-      } else {
-        document.getElementById("chat-input").focus();
-      }
+      if (prefill) { document.getElementById("chat-input").value = prefill; sendMessage(); }
+      else { document.getElementById("chat-input").focus(); }
     }
+
+    // ONE-PAGERS
     async function showOnePagers() {
       showScreen("onepager-screen");
-      if (!kbData) await loadKB();
-      renderOnePagers();
+      showListView();
+      if (!opList) await loadOpList();
+      renderOpList();
     }
 
-    // --- KB LOAD ---
-    async function loadKB() {
+    function showListView() {
+      document.getElementById("op-list-view").classList.remove("hidden");
+      document.getElementById("op-detail-view").classList.remove("active");
+      document.getElementById("op-header-title").textContent = "One-Pagers";
+      document.getElementById("op-back-btn").textContent = "\u2190 Home";
+      document.getElementById("op-back-btn").onclick = showHome;
+    }
+
+    function showDetailView(ticketType) {
+      document.getElementById("op-list-view").classList.add("hidden");
+      document.getElementById("op-detail-view").classList.add("active");
+      document.getElementById("op-header-title").textContent = ticketType;
+      document.getElementById("op-back-btn").textContent = "\u2190 One-Pagers";
+      document.getElementById("op-back-btn").onclick = showListView;
+    }
+
+    async function loadOpList() {
       try {
-        var res = await fetch("/knowledge?pin=" + encodeURIComponent(sessionPin));
+        var res = await fetch("/one-pagers-list?pin=" + encodeURIComponent(sessionPin));
         var data = await res.json();
-        kbData = data.kb || [];
-      } catch(e) {
-        kbData = [];
-      }
+        opList = data.one_pagers || [];
+      } catch(e) { opList = []; }
     }
 
-    // --- ONE-PAGERS RENDER ---
-    function renderOnePagers() {
-      var list = document.getElementById("op-list");
-      if (!kbData || kbData.length === 0) {
-        list.innerHTML = "<div style='text-align:center;color:#999;padding:40px;font-size:14px;'>No data available.</div>";
+    function renderOpList() {
+      var container = document.getElementById("op-list-view");
+      var loading = document.getElementById("op-loading");
+      if (loading) loading.remove();
+      // Clear existing items
+      container.querySelectorAll(".op-list-item").forEach(function(el) { el.remove(); });
+      if (!opList || !opList.length) {
+        container.innerHTML = "<div style=\"text-align:center;color:#999;padding:40px;font-size:14px;\">No one-pagers found.</div>";
         return;
       }
-      list.innerHTML = "";
-      kbData.forEach(function(item) {
+      opList.forEach(function(item) {
         var div = document.createElement("div");
-        div.className = "op-item";
+        div.className = "op-list-item";
         var meta = [];
         if (item.intake_channel) meta.push(item.intake_channel);
         if (item.volume_per_day) meta.push(item.volume_per_day + "/day");
-        var metaHtml = meta.length ? "<div class='op-meta'>" + meta.join(" &middot; ") + "</div>" : "";
-
-        var bodyHtml =
-          field("Intake Channel", item.intake_channel) +
-          field("Who Contacts IT", item.who_contacts_it) +
-          field("Systems", item.systems_needed) +
-          stepsField("Steps", item.steps) +
-          field("SLA", item.sla_minutes ? item.sla_minutes + " minutes" : null) +
-          field("Definition of Done", item.definition_of_done) +
-          field("Escalation Trigger", item.escalation_trigger) +
-          escalationField(item.escalation_contact) +
-          field("Common Mistakes", item.common_mistakes) +
-          field("Notes", item.notes);
-
         div.innerHTML =
-          "<div class='op-header'>" +
-            "<div class='op-header-left'><h3>" + esc(item.ticket_type) + "</h3>" + metaHtml + "</div>" +
-            "<span class='op-chevron'>&#9660;</span>" +
-          "</div>" +
-          "<div class='op-body'>" + bodyHtml + "</div>";
-
-        // Header toggle via event listener (no inline onclick)
-        div.querySelector(".op-header").addEventListener("click", function() {
-          div.classList.toggle("open");
-        });
-
-        // Ask AI button via DOM (avoids JSON.stringify-in-onclick)
-        var askBtn = document.createElement("button");
-        askBtn.className = "op-ask-btn";
-        askBtn.textContent = "Ask AI about this ticket type →";
-        askBtn.addEventListener("click", function() { askAbout(item.ticket_type); });
-        div.querySelector(".op-body").appendChild(askBtn);
-
-        // Copy buttons via event listeners (data-contact attribute set by escalationField)
-        div.querySelectorAll(".copy-btn[data-contact]").forEach(function(btn) {
-          btn.addEventListener("click", function() { copyEsc(btn, btn.getAttribute("data-contact")); });
-        });
-
-        list.appendChild(div);
+          "<div><h3>" + escText(item.ticket_type) + "</h3>" +
+          (meta.length ? "<div class=\"op-meta\">" + escText(meta.join(" \u00b7 ")) + "</div>" : "") +
+          "</div><span class=\"op-list-arrow\">&#8250;</span>";
+        div.addEventListener("click", function() { openOnePager(item); });
+        container.appendChild(div);
       });
     }
 
-    function esc(s) {
+    async function openOnePager(item) {
+      showDetailView(item.ticket_type);
+      currentTicketType = item.ticket_type;
+      var contentEl = document.getElementById("op-detail-content");
+      contentEl.innerHTML = "<p style=\"color:#999;font-style:italic;\">Loading...</p>";
+      try {
+        var filename = item.file_path ? item.file_path.replace(/^.*[\\\/]/, "") : "";
+        var res = await fetch("/one-pagers/" + encodeURIComponent(filename));
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        var md = await res.text();
+        contentEl.innerHTML = marked.parse(md);
+        // Add Ask AI button
+        var btn = document.createElement("button");
+        btn.className = "op-ask-ai-btn";
+        btn.textContent = "Ask AI about this ticket type \u2192";
+        btn.addEventListener("click", function() {
+          showChat("Tell me about the " + currentTicketType + " ticket type \u2014 steps, escalation, and common mistakes.");
+        });
+        contentEl.appendChild(btn);
+      } catch(e) {
+        contentEl.innerHTML = "<p style=\"color:#c00;\">Could not load one-pager: " + e.message + "</p>";
+      }
+    }
+
+    function escText(s) {
       if (!s) return "";
-      return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
-    }
-    function field(label, value) {
-      if (!value) return "";
-      var str;
-      if (Array.isArray(value)) {
-        if (!value.length) return "";
-        str = value.map(function(v){ return String(v); }).join(", ");
-      } else {
-        str = String(value);
-      }
-      if (!str.trim()) return "";
-      return "<div class='op-section'><div class='op-label'>" + label + "</div><div class='op-value'>" + esc(str) + "</div></div>";
-    }
-    function stepsField(label, value) {
-      if (!value) return "";
-      var lines;
-      if (Array.isArray(value)) {
-        lines = value.map(function(l){ return String(l).trim(); }).filter(Boolean);
-      } else {
-        lines = String(value).split("\n").map(function(l){ return l.trim(); }).filter(Boolean);
-      }
-      if (!lines.length) return "";
-      var numbered = lines.map(function(l, i){ return (i+1) + ". " + l.replace(/^\d+[.)\s]+/, ""); }).join("\n");
-      return "<div class='op-section'><div class='op-label'>" + label + "</div><div class='op-value' style='white-space:pre-line'>" + esc(numbered) + "</div></div>";
-    }
-    function escalationField(contact) {
-      if (!contact || !String(contact).trim()) return "";
-      var safeContact = esc(contact);
-      return "<div class='op-section'><div class='op-label'>Escalation Contact</div><div class='op-value'>" +
-        "<div class='copy-row'><span>" + safeContact + "</span>" +
-        "<button class='copy-btn' data-contact=\"" + safeContact + "\">Copy</button>" +
-        "</div></div></div>";
+      return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
     }
 
-    function toggleOP(header) {
-      header.closest(".op-item").classList.toggle("open");
-    }
-    function copyEsc(btn, text) {
-      navigator.clipboard.writeText(text).then(function() {
-        btn.textContent = "Copied!";
-        btn.classList.add("copied");
-        setTimeout(function(){ btn.textContent = "Copy"; btn.classList.remove("copied"); }, 2000);
-      });
-    }
-    function askAbout(ticketType) {
-      showChat("Tell me about the " + ticketType + " ticket type — walk me through the steps, escalation path, and common mistakes.");
-    }
-
-    // --- CHAT ---
+    // CHAT
     document.getElementById("chat-input").addEventListener("keydown", function(e) {
       if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
     });
-
     function ask(text) { document.getElementById("chat-input").value = text; sendMessage(); }
 
     function addMsg(text, cls, isMarkdown) {
@@ -344,11 +309,8 @@
       var chatEl = document.getElementById("chat");
       var div = document.createElement("div");
       div.className = "msg " + cls;
-      if (isMarkdown && typeof marked !== "undefined") {
-        div.innerHTML = marked.parse(text);
-      } else {
-        div.textContent = text;
-      }
+      if (isMarkdown && typeof marked !== "undefined") { div.innerHTML = marked.parse(text); }
+      else { div.textContent = text; }
       chatEl.appendChild(div);
       chatEl.scrollTop = chatEl.scrollHeight;
       return div;
@@ -357,14 +319,14 @@
     function clearChat() {
       chatHistory = [];
       document.getElementById("chat").innerHTML =
-        "<div class='welcome' id='welcome-msg'>" +
+        "<div class=\"welcome\" id=\"welcome-msg\">" +
           "<h2>How can I help?</h2>" +
           "<p>Ask any question about handling VetRad IT tickets.</p>" +
-          "<div class='examples'>" +
-            "<button class='example' onclick='ask(this.textContent)'>How do I update a client email address in Ambra?</button>" +
-            "<button class='example' onclick='ask(this.textContent)'>What do I do when images aren't loading in IntoView?</button>" +
-            "<button class='example' onclick='ask(this.textContent)'>How do I handle a Make The Switch inquiry from an external client?</button>" +
-            "<button class='example' onclick='ask(this.textContent)'>What are comm notes and how do I process them?</button>" +
+          "<div class=\"examples\">" +
+            "<button class=\"example\" onclick=\"ask(this.textContent)\">How do I update a client email address in Ambra?</button>" +
+            "<button class=\"example\" onclick=\"ask(this.textContent)\">What do I do when images aren't loading in IntoView?</button>" +
+            "<button class=\"example\" onclick=\"ask(this.textContent)\">How do I handle a Make The Switch inquiry from an external client?</button>" +
+            "<button class=\"example\" onclick=\"ask(this.textContent)\">What are comm notes and how do I process them?</button>" +
           "</div>" +
         "</div>";
     }
@@ -380,15 +342,13 @@
       var thinking = addMsg("Searching knowledge base...", "thinking", false);
       try {
         var res = await fetch("/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
+          method: "POST", headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ message: msg, pin: sessionPin, history: chatHistory.slice(-4) })
         });
         var data = await res.json();
         thinking.remove();
-        if (data.error) {
-          addMsg("Error: " + data.error, "error", false);
-        } else {
+        if (data.error) { addMsg("Error: " + data.error, "error", false); }
+        else {
           addMsg(data.answer, "assistant", true);
           chatHistory.push({ role: "user", content: msg });
           chatHistory.push({ role: "assistant", content: data.answer });
