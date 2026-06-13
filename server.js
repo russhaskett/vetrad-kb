@@ -41,19 +41,42 @@ app.post('/auth', (req, res) => {
   }
 });
 
+app.get('/knowledge', async (req, res) => {
+  const { pin } = req.query;
+  if (pin !== APP_PIN) return res.status(401).json({ error: 'Unauthorized' });
+  try {
+    const kb = await loadKnowledgeBase();
+    res.json({ kb });
+  } catch (err) {
+    console.error('Knowledge error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.post('/chat', async (req, res) => {
-  const { message, pin } = req.body;
+  const { message, pin, history } = req.body;
   if (pin !== APP_PIN) return res.status(401).json({ error: 'Unauthorized' });
   if (!message || !message.trim()) return res.status(400).json({ error: 'No message provided' });
   if (!process.env.ANTHROPIC_API_KEY) return res.status(500).json({ error: 'ANTHROPIC_API_KEY not set.' });
   try {
     const kb = await loadKnowledgeBase();
+    let historyText = '';
+    if (history && Array.isArray(history) && history.length > 0) {
+      const recent = history.slice(-4);
+      historyText = '\n\nPREVIOUS CONVERSATION:\n' + recent.map(h =>
+        (h.role === 'user' ? 'Agent: ' : 'Assistant: ') + h.content
+      ).join('\n') + '\n';
+    }
     const response = await anthropic.messages.create({
       model: 'claude-haiku-4-5',
       max_tokens: 1024,
       messages: [{
         role: 'user',
-        content: 'You are a VetRad IT support knowledge assistant helping IT Service Desk agents handle tickets correctly.\n\nUsing ONLY the knowledge base below, answer the question with specific step-by-step instructions.\n- If multiple ticket types are relevant, address each.\n- If the answer is not in the KB, say so - do not guess.\n- Be concise. Use numbered lists for steps. Mention which systems are involved.\n\nKNOWLEDGE BASE:\n' + JSON.stringify(kb, null, 2) + '\n\nUSER QUESTION:\n' + message
+        content: 'You are a VetRad IT support knowledge assistant helping IT Service Desk agents handle tickets correctly.\n\nUsing ONLY the knowledge base below, answer the question with specific step-by-step instructions.\n- If multiple ticket types are relevant, address each.\n- If the answer is not in the KB, say so - do not guess.\n- Be concise. Use numbered lists for steps. Mention which systems are involved.' +
+          (historyText ? '\n- A previous conversation is provided for context; use it for follow-up questions.' : '') +
+          '\n\nKNOWLEDGE BASE:\n' + JSON.stringify(kb, null, 2) +
+          historyText +
+          '\n\nUSER QUESTION:\n' + message
       }]
     });
     res.json({ answer: response.content[0].text });

@@ -6,7 +6,13 @@
   <title>VetRad IT Knowledge Base</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; display: flex; flex-direction: column; height: 100vh; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f5f5f5; height: 100vh; display: flex; flex-direction: column; }
+
+    /* screens */
+    .screen { display: none; flex-direction: column; flex: 1; overflow: hidden; }
+    .screen.active { display: flex; }
+
+    /* PIN */
     #pin-screen { position: fixed; inset: 0; background: #f5f5f5; display: flex; align-items: center; justify-content: center; z-index: 100; }
     #pin-screen.hidden { display: none; }
     .pin-box { background: white; border-radius: 12px; padding: 40px; width: 320px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: center; }
@@ -17,30 +23,78 @@
     .pin-box button { width: 100%; background: #1a3a5c; color: white; border: none; border-radius: 8px; padding: 12px; font-size: 15px; font-weight: 600; cursor: pointer; }
     .pin-box button:hover { background: #254e7a; }
     .pin-error { color: #c00; font-size: 13px; margin-top: 10px; min-height: 18px; }
-    header { background: #1a3a5c; color: white; padding: 16px 24px; }
-    header h1 { font-size: 18px; font-weight: 600; }
-    header span { font-size: 13px; opacity: 0.7; }
+
+    /* Header */
+    header { background: #1a3a5c; color: white; padding: 14px 24px; display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+    header h1 { font-size: 18px; font-weight: 600; flex: 1; }
+    .back-btn { background: rgba(255,255,255,0.15); color: white; border: none; border-radius: 6px; padding: 6px 14px; font-size: 13px; cursor: pointer; white-space: nowrap; }
+    .back-btn:hover { background: rgba(255,255,255,0.25); }
+    .clear-btn { background: none; border: 1px solid rgba(255,255,255,0.3); color: rgba(255,255,255,0.8); border-radius: 6px; padding: 6px 12px; font-size: 12px; cursor: pointer; white-space: nowrap; }
+    .clear-btn:hover { background: rgba(255,255,255,0.1); }
+
+    /* HOME */
+    .home-content { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 24px; }
+    .home-cards { display: flex; gap: 24px; max-width: 720px; width: 100%; }
+    .home-card { flex: 1; background: white; border-radius: 16px; padding: 40px 32px; text-align: center; cursor: pointer; box-shadow: 0 2px 12px rgba(0,0,0,0.08); border: 2px solid transparent; transition: border-color 0.15s, box-shadow 0.15s; }
+    .home-card:hover { border-color: #1a3a5c; box-shadow: 0 4px 20px rgba(26,58,92,0.15); }
+    .home-card .icon { font-size: 40px; margin-bottom: 16px; }
+    .home-card h2 { font-size: 18px; color: #1a3a5c; margin-bottom: 8px; }
+    .home-card p { font-size: 13px; color: #888; line-height: 1.5; }
+
+    /* ONE-PAGERS */
+    .op-list { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 8px; }
+    .op-item { background: white; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); overflow: hidden; }
+    .op-header { padding: 16px 20px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; user-select: none; }
+    .op-header:hover { background: #f9f9f9; }
+    .op-header-left h3 { font-size: 15px; color: #1a3a5c; font-weight: 600; }
+    .op-meta { font-size: 12px; color: #999; margin-top: 2px; }
+    .op-chevron { color: #aaa; font-size: 14px; transition: transform 0.2s; flex-shrink: 0; }
+    .op-item.open .op-chevron { transform: rotate(180deg); }
+    .op-body { display: none; padding: 0 20px 20px; border-top: 1px solid #f0f0f0; }
+    .op-item.open .op-body { display: block; }
+    .op-section { margin-top: 14px; }
+    .op-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #999; margin-bottom: 4px; }
+    .op-value { font-size: 14px; color: #222; line-height: 1.6; }
+    .op-value ol { padding-left: 20px; }
+    .op-value li { margin-bottom: 3px; }
+    .copy-row { display: flex; align-items: center; gap: 8px; }
+    .copy-btn { background: none; border: 1px solid #ddd; border-radius: 4px; padding: 2px 8px; font-size: 11px; color: #666; cursor: pointer; flex-shrink: 0; }
+    .copy-btn:hover { border-color: #1a3a5c; color: #1a3a5c; }
+    .copy-btn.copied { background: #e8f5e9; border-color: #4caf50; color: #2e7d32; }
+    .op-ask-btn { margin-top: 18px; width: 100%; background: #1a3a5c; color: white; border: none; border-radius: 8px; padding: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
+    .op-ask-btn:hover { background: #254e7a; }
+
+    /* CHAT */
     #chat { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
-    .msg { max-width: 720px; padding: 14px 18px; border-radius: 10px; line-height: 1.6; font-size: 14px; white-space: pre-wrap; }
-    .msg.user { background: #1a3a5c; color: white; align-self: flex-end; }
+    .msg { max-width: 720px; padding: 14px 18px; border-radius: 10px; line-height: 1.6; font-size: 14px; }
+    .msg.user { background: #1a3a5c; color: white; align-self: flex-end; white-space: pre-wrap; }
     .msg.assistant { background: white; color: #222; align-self: flex-start; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
-    .msg.error { background: #fff0f0; color: #c00; align-self: flex-start; border: 1px solid #fcc; }
-    .msg.thinking { background: white; color: #999; align-self: flex-start; font-style: italic; }
-    #input-area { background: white; border-top: 1px solid #e0e0e0; padding: 16px 24px; display: flex; gap: 12px; }
-    #input { flex: 1; padding: 12px 16px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; resize: none; font-family: inherit; outline: none; }
-    #input:focus { border-color: #1a3a5c; }
-    #send { background: #1a3a5c; color: white; border: none; border-radius: 8px; padding: 0 20px; font-size: 14px; font-weight: 600; cursor: pointer; }
-    #send:hover { background: #254e7a; }
-    #send:disabled { background: #999; cursor: not-allowed; }
+    .msg.assistant ol, .msg.assistant ul { padding-left: 20px; margin: 6px 0; }
+    .msg.assistant li { margin-bottom: 3px; }
+    .msg.assistant p { margin-bottom: 8px; }
+    .msg.assistant p:last-child { margin-bottom: 0; }
+    .msg.assistant strong { font-weight: 600; }
+    .msg.error { background: #fff0f0; color: #c00; align-self: flex-start; border: 1px solid #fcc; white-space: pre-wrap; }
+    .msg.thinking { background: white; color: #999; align-self: flex-start; font-style: italic; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
     .welcome { text-align: center; color: #888; margin: auto; padding: 40px; }
     .welcome h2 { font-size: 20px; color: #444; margin-bottom: 8px; }
     .welcome p { font-size: 14px; line-height: 1.6; }
     .examples { margin-top: 16px; display: flex; flex-direction: column; gap: 8px; }
     .example { background: white; border: 1px solid #e0e0e0; border-radius: 8px; padding: 10px 16px; font-size: 13px; cursor: pointer; text-align: left; }
     .example:hover { border-color: #1a3a5c; color: #1a3a5c; }
+    #input-area { background: white; border-top: 1px solid #e0e0e0; padding: 16px 24px; display: flex; gap: 12px; flex-shrink: 0; }
+    #chat-input { flex: 1; padding: 12px 16px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; resize: none; font-family: inherit; outline: none; }
+    #chat-input:focus { border-color: #1a3a5c; }
+    #send-btn { background: #1a3a5c; color: white; border: none; border-radius: 8px; padding: 0 20px; font-size: 14px; font-weight: 600; cursor: pointer; }
+    #send-btn:hover { background: #254e7a; }
+    #send-btn:disabled { background: #999; cursor: not-allowed; }
+
+    @media (max-width: 560px) { .home-cards { flex-direction: column; } }
   </style>
 </head>
 <body>
+
+  <!-- PIN -->
   <div id="pin-screen">
     <div class="pin-box">
       <h2>VetRad IT Knowledge Base</h2>
@@ -51,100 +105,274 @@
     </div>
   </div>
 
-  <header>
-    <h1>VetRad IT Knowledge Base</h1>
-    <span>Ask about any ticket type - get step-by-step instructions</span>
-  </header>
-
-  <div id="chat">
-    <div class="welcome">
-      <h2>How can I help?</h2>
-      <p>Ask any question about handling VetRad IT tickets.</p>
-      <div class="examples">
-        <button class="example" onclick="ask(this.textContent)">How do I update a client email address in Ambra?</button>
-        <button class="example" onclick="ask(this.textContent)">What do I do when images aren't loading in IntoView?</button>
-        <button class="example" onclick="ask(this.textContent)">How do I handle a Make The Switch inquiry from an external client?</button>
-        <button class="example" onclick="ask(this.textContent)">What are comm notes and how do I process them?</button>
+  <!-- HOME -->
+  <div id="home-screen" class="screen">
+    <header><h1>VetRad IT Knowledge Base</h1></header>
+    <div class="home-content">
+      <div class="home-cards">
+        <div class="home-card" onclick="showOnePagers()">
+          <div class="icon">&#128203;</div>
+          <h2>Browse One-Pagers</h2>
+          <p>Step-by-step procedures for all 12 VetRad ticket types</p>
+        </div>
+        <div class="home-card" onclick="showChat(null)">
+          <div class="icon">&#129302;</div>
+          <h2>Ask AI</h2>
+          <p>Ask a question in plain language and get an instant answer from the knowledge base</p>
+        </div>
       </div>
     </div>
   </div>
 
-  <div id="input-area">
-    <textarea id="input" rows="2" placeholder="Ask about any VetRad ticket type..."></textarea>
-    <button id="send" onclick="sendMessage()">Send</button>
+  <!-- ONE-PAGERS -->
+  <div id="onepager-screen" class="screen">
+    <header>
+      <button class="back-btn" onclick="showHome()">&#8592; Home</button>
+      <h1>One-Pagers</h1>
+    </header>
+    <div class="op-list" id="op-list">
+      <div style="text-align:center;color:#999;padding:40px;font-size:14px;">Loading...</div>
+    </div>
   </div>
 
-  <script>
-    var chat = document.getElementById('chat');
-    var input = document.getElementById('input');
-    var sendBtn = document.getElementById('send');
-    var sessionPin = null;
+  <!-- CHAT -->
+  <div id="chat-screen" class="screen">
+    <header>
+      <button class="back-btn" onclick="showHome()">&#8592; Home</button>
+      <h1>Ask AI</h1>
+      <button class="clear-btn" onclick="clearChat()">Clear</button>
+    </header>
+    <div id="chat">
+      <div class="welcome" id="welcome-msg">
+        <h2>How can I help?</h2>
+        <p>Ask any question about handling VetRad IT tickets.</p>
+        <div class="examples">
+          <button class="example" onclick="ask(this.textContent)">How do I update a client email address in Ambra?</button>
+          <button class="example" onclick="ask(this.textContent)">What do I do when images aren't loading in IntoView?</button>
+          <button class="example" onclick="ask(this.textContent)">How do I handle a Make The Switch inquiry from an external client?</button>
+          <button class="example" onclick="ask(this.textContent)">What are comm notes and how do I process them?</button>
+        </div>
+      </div>
+    </div>
+    <div id="input-area">
+      <textarea id="chat-input" rows="2" placeholder="Ask about any VetRad ticket type..."></textarea>
+      <button id="send-btn" onclick="sendMessage()">Send</button>
+    </div>
+  </div>
 
-    document.getElementById('pin-input').addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') submitPin();
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+  <script>
+    var sessionPin = null;
+    var chatHistory = [];
+    var kbData = null;
+
+    // --- PIN ---
+    document.getElementById("pin-input").addEventListener("keydown", function(e) {
+      if (e.key === "Enter") submitPin();
     });
 
     async function submitPin() {
-      var pin = document.getElementById('pin-input').value.trim();
-      var errEl = document.getElementById('pin-error');
-      errEl.textContent = '';
+      var pin = document.getElementById("pin-input").value.trim();
+      var errEl = document.getElementById("pin-error");
+      errEl.textContent = "";
       if (!pin) return;
-      var res = await fetch('/auth', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      var res = await fetch("/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ pin: pin })
       });
       var data = await res.json();
       if (data.ok) {
         sessionPin = pin;
-        document.getElementById('pin-screen').classList.add('hidden');
-        input.focus();
+        document.getElementById("pin-screen").classList.add("hidden");
+        showHome();
       } else {
-        errEl.textContent = 'Incorrect PIN. Try again.';
-        document.getElementById('pin-input').value = '';
+        errEl.textContent = "Incorrect PIN. Try again.";
+        document.getElementById("pin-input").value = "";
       }
     }
 
-    input.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+    // --- SCREENS ---
+    function showScreen(id) {
+      document.querySelectorAll(".screen").forEach(function(s) { s.classList.remove("active"); });
+      document.getElementById(id).classList.add("active");
+    }
+    function showHome() { showScreen("home-screen"); }
+    function showChat(prefill) {
+      showScreen("chat-screen");
+      if (prefill) {
+        document.getElementById("chat-input").value = prefill;
+        sendMessage();
+      } else {
+        document.getElementById("chat-input").focus();
+      }
+    }
+    async function showOnePagers() {
+      showScreen("onepager-screen");
+      if (!kbData) await loadKB();
+      renderOnePagers();
+    }
+
+    // --- KB LOAD ---
+    async function loadKB() {
+      try {
+        var res = await fetch("/knowledge?pin=" + encodeURIComponent(sessionPin));
+        var data = await res.json();
+        kbData = data.kb || [];
+      } catch(e) {
+        kbData = [];
+      }
+    }
+
+    // --- ONE-PAGERS RENDER ---
+    function renderOnePagers() {
+      var list = document.getElementById("op-list");
+      if (!kbData || kbData.length === 0) {
+        list.innerHTML = "<div style='text-align:center;color:#999;padding:40px;font-size:14px;'>No data available.</div>";
+        return;
+      }
+      list.innerHTML = "";
+      kbData.forEach(function(item) {
+        var div = document.createElement("div");
+        div.className = "op-item";
+        var meta = [];
+        if (item.intake_channel) meta.push(item.intake_channel);
+        if (item.volume_per_day) meta.push(item.volume_per_day + "/day");
+        var metaHtml = meta.length ? "<div class='op-meta'>" + meta.join(" &middot; ") + "</div>" : "";
+        div.innerHTML =
+          "<div class='op-header' onclick='toggleOP(this)'>" +
+            "<div class='op-header-left'><h3>" + esc(item.ticket_type) + "</h3>" + metaHtml + "</div>" +
+            "<span class='op-chevron'>&#9660;</span>" +
+          "</div>" +
+          "<div class='op-body'>" +
+            field("Intake Channel", item.intake_channel) +
+            field("Who Contacts IT", item.who_contacts_it) +
+            field("Systems", item.systems_needed) +
+            stepsField("Steps", item.steps) +
+            field("SLA", item.sla_minutes ? item.sla_minutes + " minutes" : null) +
+            field("Definition of Done", item.definition_of_done) +
+            field("Escalation Trigger", item.escalation_trigger) +
+            escalationField(item.escalation_contact) +
+            field("Common Mistakes", item.common_mistakes) +
+            field("Notes", item.notes) +
+            "<button class='op-ask-btn' onclick='askAbout(" + JSON.stringify(item.ticket_type) + ")'>Ask AI about this ticket type &#8594;</button>" +
+          "</div>";
+        list.appendChild(div);
+      });
+    }
+
+    function esc(s) {
+      if (!s) return "";
+      return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+    }
+    function field(label, value) {
+      if (!value || !String(value).trim()) return "";
+      return "<div class='op-section'><div class='op-label'>" + label + "</div><div class='op-value'>" + esc(String(value)) + "</div></div>";
+    }
+    function stepsField(label, value) {
+      if (!value || !String(value).trim()) return "";
+      var lines = String(value).split("\n").map(function(l){ return l.trim(); }).filter(Boolean);
+      var html;
+      if (lines.length > 1) {
+        html = "<ol>" + lines.map(function(l){ return "<li>" + esc(l.replace(/^\d+[.)\s]+/, "")) + "</li>"; }).join("") + "</ol>";
+      } else {
+        html = esc(value);
+      }
+      return "<div class='op-section'><div class='op-label'>" + label + "</div><div class='op-value'>" + html + "</div></div>";
+    }
+    function escalationField(contact) {
+      if (!contact || !String(contact).trim()) return "";
+      var safeContact = esc(contact);
+      var jsonContact = JSON.stringify(contact);
+      return "<div class='op-section'><div class='op-label'>Escalation Contact</div><div class='op-value'>" +
+        "<div class='copy-row'><span>" + safeContact + "</span>" +
+        "<button class='copy-btn' onclick='copyEsc(this," + jsonContact + ")'>Copy</button>" +
+        "</div></div></div>";
+    }
+
+    function toggleOP(header) {
+      header.closest(".op-item").classList.toggle("open");
+    }
+    function copyEsc(btn, text) {
+      navigator.clipboard.writeText(text).then(function() {
+        btn.textContent = "Copied!";
+        btn.classList.add("copied");
+        setTimeout(function(){ btn.textContent = "Copy"; btn.classList.remove("copied"); }, 2000);
+      });
+    }
+    function askAbout(ticketType) {
+      showChat("Tell me about the " + ticketType + " ticket type — walk me through the steps, escalation path, and common mistakes.");
+    }
+
+    // --- CHAT ---
+    document.getElementById("chat-input").addEventListener("keydown", function(e) {
+      if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
     });
 
-    function ask(text) { input.value = text; sendMessage(); }
+    function ask(text) { document.getElementById("chat-input").value = text; sendMessage(); }
 
-    function addMsg(text, cls) {
-      var welcome = chat.querySelector('.welcome');
+    function addMsg(text, cls, isMarkdown) {
+      var welcome = document.getElementById("welcome-msg");
       if (welcome) welcome.remove();
-      var div = document.createElement('div');
-      div.className = 'msg ' + cls;
-      div.textContent = text;
-      chat.appendChild(div);
-      chat.scrollTop = chat.scrollHeight;
+      var chatEl = document.getElementById("chat");
+      var div = document.createElement("div");
+      div.className = "msg " + cls;
+      if (isMarkdown && typeof marked !== "undefined") {
+        div.innerHTML = marked.parse(text);
+      } else {
+        div.textContent = text;
+      }
+      chatEl.appendChild(div);
+      chatEl.scrollTop = chatEl.scrollHeight;
       return div;
     }
 
+    function clearChat() {
+      chatHistory = [];
+      document.getElementById("chat").innerHTML =
+        "<div class='welcome' id='welcome-msg'>" +
+          "<h2>How can I help?</h2>" +
+          "<p>Ask any question about handling VetRad IT tickets.</p>" +
+          "<div class='examples'>" +
+            "<button class='example' onclick='ask(this.textContent)'>How do I update a client email address in Ambra?</button>" +
+            "<button class='example' onclick='ask(this.textContent)'>What do I do when images aren't loading in IntoView?</button>" +
+            "<button class='example' onclick='ask(this.textContent)'>How do I handle a Make The Switch inquiry from an external client?</button>" +
+            "<button class='example' onclick='ask(this.textContent)'>What are comm notes and how do I process them?</button>" +
+          "</div>" +
+        "</div>";
+    }
+
     async function sendMessage() {
-      var msg = input.value.trim();
+      var inputEl = document.getElementById("chat-input");
+      var sendBtn = document.getElementById("send-btn");
+      var msg = inputEl.value.trim();
       if (!msg || sendBtn.disabled) return;
-      input.value = '';
+      inputEl.value = "";
       sendBtn.disabled = true;
-      addMsg(msg, 'user');
-      var thinking = addMsg('Searching knowledge base...', 'thinking');
+      addMsg(msg, "user", false);
+      var thinking = addMsg("Searching knowledge base...", "thinking", false);
       try {
-        var res = await fetch('/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: msg, pin: sessionPin })
+        var res = await fetch("/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: msg, pin: sessionPin, history: chatHistory.slice(-4) })
         });
         var data = await res.json();
         thinking.remove();
-        if (data.error) { addMsg('Error: ' + data.error, 'error'); }
-        else { addMsg(data.answer, 'assistant'); }
-      } catch (err) {
+        if (data.error) {
+          addMsg("Error: " + data.error, "error", false);
+        } else {
+          addMsg(data.answer, "assistant", true);
+          chatHistory.push({ role: "user", content: msg });
+          chatHistory.push({ role: "assistant", content: data.answer });
+          if (chatHistory.length > 8) chatHistory = chatHistory.slice(-8);
+        }
+      } catch(err) {
         thinking.remove();
-        addMsg('Network error: ' + err.message, 'error');
+        addMsg("Network error: " + err.message, "error", false);
       }
       sendBtn.disabled = false;
-      input.focus();
+      inputEl.focus();
     }
   </script>
 </body>
