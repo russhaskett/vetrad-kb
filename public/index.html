@@ -239,24 +239,43 @@
         if (item.intake_channel) meta.push(item.intake_channel);
         if (item.volume_per_day) meta.push(item.volume_per_day + "/day");
         var metaHtml = meta.length ? "<div class='op-meta'>" + meta.join(" &middot; ") + "</div>" : "";
+
+        var bodyHtml =
+          field("Intake Channel", item.intake_channel) +
+          field("Who Contacts IT", item.who_contacts_it) +
+          field("Systems", item.systems_needed) +
+          stepsField("Steps", item.steps) +
+          field("SLA", item.sla_minutes ? item.sla_minutes + " minutes" : null) +
+          field("Definition of Done", item.definition_of_done) +
+          field("Escalation Trigger", item.escalation_trigger) +
+          escalationField(item.escalation_contact) +
+          field("Common Mistakes", item.common_mistakes) +
+          field("Notes", item.notes);
+
         div.innerHTML =
-          "<div class='op-header' onclick='toggleOP(this)'>" +
+          "<div class='op-header'>" +
             "<div class='op-header-left'><h3>" + esc(item.ticket_type) + "</h3>" + metaHtml + "</div>" +
             "<span class='op-chevron'>&#9660;</span>" +
           "</div>" +
-          "<div class='op-body'>" +
-            field("Intake Channel", item.intake_channel) +
-            field("Who Contacts IT", item.who_contacts_it) +
-            field("Systems", item.systems_needed) +
-            stepsField("Steps", item.steps) +
-            field("SLA", item.sla_minutes ? item.sla_minutes + " minutes" : null) +
-            field("Definition of Done", item.definition_of_done) +
-            field("Escalation Trigger", item.escalation_trigger) +
-            escalationField(item.escalation_contact) +
-            field("Common Mistakes", item.common_mistakes) +
-            field("Notes", item.notes) +
-            "<button class='op-ask-btn' onclick='askAbout(" + JSON.stringify(item.ticket_type) + ")'>Ask AI about this ticket type &#8594;</button>" +
-          "</div>";
+          "<div class='op-body'>" + bodyHtml + "</div>";
+
+        // Header toggle via event listener (no inline onclick)
+        div.querySelector(".op-header").addEventListener("click", function() {
+          div.classList.toggle("open");
+        });
+
+        // Ask AI button via DOM (avoids JSON.stringify-in-onclick)
+        var askBtn = document.createElement("button");
+        askBtn.className = "op-ask-btn";
+        askBtn.textContent = "Ask AI about this ticket type →";
+        askBtn.addEventListener("click", function() { askAbout(item.ticket_type); });
+        div.querySelector(".op-body").appendChild(askBtn);
+
+        // Copy buttons via event listeners (data-contact attribute set by escalationField)
+        div.querySelectorAll(".copy-btn[data-contact]").forEach(function(btn) {
+          btn.addEventListener("click", function() { copyEsc(btn, btn.getAttribute("data-contact")); });
+        });
+
         list.appendChild(div);
       });
     }
@@ -299,10 +318,9 @@
     function escalationField(contact) {
       if (!contact || !String(contact).trim()) return "";
       var safeContact = esc(contact);
-      var jsonContact = JSON.stringify(contact);
       return "<div class='op-section'><div class='op-label'>Escalation Contact</div><div class='op-value'>" +
         "<div class='copy-row'><span>" + safeContact + "</span>" +
-        "<button class='copy-btn' onclick='copyEsc(this," + jsonContact + ")'>Copy</button>" +
+        "<button class='copy-btn' data-contact=\"" + safeContact + "\">Copy</button>" +
         "</div></div></div>";
     }
 
